@@ -33,6 +33,8 @@ Candidates to add later: OrangeHRM, ParaBank, AutomationExercise, TodoMVC — op
 
 ## Getting started
 
+Requires Node.js 22+ (needed by the Pact tooling).
+
 ```bash
 npm install
 npx playwright install --with-deps
