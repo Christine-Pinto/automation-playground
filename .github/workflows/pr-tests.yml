@@ -68,6 +68,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run test:pact
+        env:
+          PACT_DO_NOT_TRACK: 'true'
 
   # ui-and-api-tests / pact-tests are conditional on which subproject a PR
   # touches, so their check names don't reliably appear on every PR. This
