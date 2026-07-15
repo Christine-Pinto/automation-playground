@@ -1,5 +1,16 @@
 # automation-playground
 
+[![PR Tests](https://github.com/Christine-Pinto/automation-playground/actions/workflows/pr-tests.yml/badge.svg)](https://github.com/Christine-Pinto/automation-playground/actions/workflows/pr-tests.yml)
+[![Main Tests](https://github.com/Christine-Pinto/automation-playground/actions/workflows/main-tests.yml/badge.svg)](https://github.com/Christine-Pinto/automation-playground/actions/workflows/main-tests.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?logo=nodedotjs&logoColor=white)
+![Playwright](https://img.shields.io/badge/Playwright-2EAD33?logo=playwright&logoColor=white)
+![Jest](https://img.shields.io/badge/Jest-C21325?logo=jest&logoColor=white)
+![Pact](https://img.shields.io/badge/Pact-contract--testing-EF3D26)
+![Express](https://img.shields.io/badge/Express-000000?logo=express&logoColor=white)
+
 A public, community-driven playground for practicing UI, API, and contract test automation with [Playwright](https://playwright.dev).
 
 **How it works:** someone writes an issue describing a test scenario against one of the practice sites below, someone else automates it in a PR, GitHub Actions runs the suite automatically, and a review is required before it merges into `main`. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full loop.
@@ -63,6 +74,10 @@ playwright.config.ts    One project per site; BROWSER env var picks the engine
 - **`main`** (`main-tests.yml`): runs on push to `main`, same path-filtering as PRs but across Chromium, Firefox, and WebKit — the extra browsers are the point of this pass, catching engine-specific breakage on merge.
 
 `main` is protected: 1 required review and a passing status check before merge.
+
+## Community
+
+This project follows a [Code of Conduct](./CODE_OF_CONDUCT.md). See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to pick up an issue and submit a PR.
 
 ## License
 
