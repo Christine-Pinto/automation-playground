@@ -1,0 +1,70 @@
+name: PR Tests
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      sites: ${{ steps.filter.outputs.changes }}
+      pact: ${{ steps.filter.outputs.pact-practice }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            automationintesting: ['tests/ui/automationintesting/**', 'tests/api/automationintesting/**']
+            qaautomationlabs: ['tests/ui/qaautomationlabs/**']
+            saucedemo: ['tests/ui/saucedemo/**']
+            the-internet: ['tests/ui/the-internet/**']
+            demoqa: ['tests/ui/demoqa/**']
+            uitestingplayground: ['tests/ui/uitestingplayground/**']
+            pact-practice: ['tests/pact-practice/**']
+
+  ui-and-api-tests:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.sites != '[]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Run tests for changed subprojects
+        env:
+          CHANGED_SITES: ${{ needs.detect-changes.outputs.sites }}
+        run: |
+          for site in $(echo "$CHANGED_SITES" | jq -r '.[]'); do
+            if [ "$site" = "automationintesting" ]; then
+              npx playwright test --project=automationintesting --project=api-automationintesting
+            elif [ "$site" != "pact-practice" ]; then
+              npx playwright test --project="$site"
+            fi
+          done
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+  pact-tests:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.pact == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+      - run: npm ci
+      - run: npm run test:pact

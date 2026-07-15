@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: How to contribute
+    url: https://github.com/Christine-Pinto/automation-playground/blob/main/CONTRIBUTING.md
+    about: Read this before opening a scenario or picking one up.

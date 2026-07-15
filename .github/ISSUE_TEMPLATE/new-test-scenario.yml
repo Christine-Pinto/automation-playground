@@ -1,0 +1,54 @@
+name: New test scenario
+description: Propose a UI/API/contract test scenario for someone to automate.
+title: "[<site>] <short scenario name>"
+labels: []
+body:
+  - type: dropdown
+    id: subproject
+    attributes:
+      label: Subproject
+      description: Which practice site is this scenario for? After submitting, apply the matching `site:*` label.
+      options:
+        - automationintesting.online
+        - testing.qaautomationlabs.com
+        - saucedemo.com
+        - the-internet.herokuapp.com
+        - demoqa.com
+        - uitestingplayground.com
+        - pact-practice (self-hosted contract testing)
+    validations:
+      required: true
+  - type: textarea
+    id: user-flow
+    attributes:
+      label: User flow / scenario
+      description: Describe the scenario in plain language, as if explaining it to a new tester.
+      placeholder: e.g. A user logs in with valid credentials, adds two items to the cart, and completes checkout.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to automate
+      description: Numbered steps the automated test should perform.
+      placeholder: |
+        1. Go to /login
+        2. Fill in username and password
+        3. Click "Login"
+        4. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected-result
+    attributes:
+      label: Expected result
+      description: What should be true if the test passes? Be specific about assertions.
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes (optional)
+      description: Known flakiness, edge cases, prerequisites, or links to related issues.
+    validations:
+      required: false
