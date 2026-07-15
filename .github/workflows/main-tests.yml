@@ -1,15 +1,33 @@
-name: Main / Nightly Full Suite
+name: Main Tests
 
 on:
   push:
     branches: [main]
-  schedule:
-    # 03:00 UTC nightly, to catch drift/flakiness on the public practice sites
-    - cron: '0 3 * * *'
   workflow_dispatch: {}
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      sites: ${{ steps.filter.outputs.changes }}
+      pact: ${{ steps.filter.outputs.pact-practice }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            automationintesting: ['tests/ui/automationintesting/**', 'tests/api/automationintesting/**']
+            qaautomationlabs: ['tests/ui/qaautomationlabs/**']
+            saucedemo: ['tests/ui/saucedemo/**']
+            the-internet: ['tests/ui/the-internet/**']
+            demoqa: ['tests/ui/demoqa/**']
+            uitestingplayground: ['tests/ui/uitestingplayground/**']
+            pact-practice: ['tests/pact-practice/**']
+
   ui-and-api-tests:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.sites != '[]' }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
@@ -24,9 +42,18 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps ${{ matrix.browser }}
-      - run: npx playwright test
+      - name: Run tests for changed subprojects
         env:
+          CHANGED_SITES: ${{ needs.detect-changes.outputs.sites }}
           BROWSER: ${{ matrix.browser }}
+        run: |
+          for site in $(echo "$CHANGED_SITES" | jq -r '.[]'); do
+            if [ "$site" = "automationintesting" ]; then
+              npx playwright test --project=automationintesting --project=api-automationintesting
+            elif [ "$site" != "pact-practice" ]; then
+              npx playwright test --project="$site"
+            fi
+          done
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
@@ -35,6 +62,8 @@ jobs:
           retention-days: 14
 
   pact-tests:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.pact == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

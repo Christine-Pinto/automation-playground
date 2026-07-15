@@ -60,7 +60,7 @@ playwright.config.ts    One project per site; BROWSER env var picks the engine
 ## CI
 
 - **PRs** (`pr-tests.yml`): runs only the subproject(s) whose folder changed, Chromium only, for fast feedback.
-- **`main` + nightly** (`main-tests.yml`): full suite across Chromium, Firefox, and WebKit, to catch drift on the public sites.
+- **`main`** (`main-tests.yml`): runs on push to `main`, same path-filtering as PRs but across Chromium, Firefox, and WebKit — the extra browsers are the point of this pass, catching engine-specific breakage on merge.
 
 `main` is protected: 1 required review and a passing status check before merge.
 
